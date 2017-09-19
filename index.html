@@ -18,6 +18,11 @@ path {
     shape-rendering: crispEdges;
 }
 
+.legend {
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+}
 </style>
 <body>
 
@@ -27,9 +32,9 @@ path {
 <script>
 
 // Set the dimensions of the canvas / graph
-var margin = {top: 30, right: 20, bottom: 30, left: 50},
+var margin = {top: 30, right: 20, bottom: 70, left: 50},
     width = 600 - margin.left - margin.right,
-    height = 270 - margin.top - margin.bottom;
+    height = 300 - margin.top - margin.bottom;
 
 // Parse the date / time
 var parseDate = d3.timeParse("%b %Y");
@@ -71,14 +76,25 @@ d3.csv("stocks.csv", function(error, data) {
     // set the colour scale
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
+    legendSpace = width/dataNest.length; // spacing for legend // ******
+
     // Loop through each symbol / key
-    dataNest.forEach(function(d) { 
+    dataNest.forEach(function(d,i) {                           // ******
 
         svg.append("path")
             .attr("class", "line")
             .style("stroke", function() { // Add the colours dynamically
                 return d.color = color(d.key); })
             .attr("d", priceline(d.values));
+
+        // Add the Legend
+        svg.append("text")                                    // *******
+            .attr("x", (legendSpace/2)+i*legendSpace) // spacing // ****
+            .attr("y", height + (margin.bottom/2)+ 5)         // *******
+            .attr("class", "legend")    // style the legend   // *******
+            .style("fill", function() { // dynamic colours    // *******
+                return d.color = color(d.key); })             // *******
+            .text(d.key);                                     // *******
 
     });
 
