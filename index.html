@@ -63,16 +63,21 @@ d3.csv("stocks.csv", function(error, data) {
     x.domain(d3.extent(data, function(d) { return d.date; }));
     y.domain([0, d3.max(data, function(d) { return d.price; })]);
 
-    // Nest the entries by symbol
+    // Nest the entries by symbol, group data as an new array based on the symbol
     var dataNest = d3.nest()
         .key(function(d) {return d.symbol;})
         .entries(data);
+
+    // set the colour scale
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Loop through each symbol / key
     dataNest.forEach(function(d) { 
 
         svg.append("path")
             .attr("class", "line")
+            .style("stroke", function() { // Add the colours dynamically
+                return d.color = color(d.key); })
             .attr("d", priceline(d.values));
 
     });
